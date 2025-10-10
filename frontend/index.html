@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+        
+        .section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h3::before {
+            content: "📋";
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            padding: 8px 15px;
+            font-size: 14px;
+            margin-left: auto;
+        }
+        
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        #taskList {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        #taskList li {
+            background: white;
+            margin: 8px 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        #taskList li:hover {
+            transform: translateX(5px);
+        }
+        
+        .task-details {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 2px solid #e1e5e9;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .task-details:not(:empty) {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
+        }
+        
+        .task-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .task-id {
+            background: #4facfe;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .task-title {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .error-state {
+            color: #e74c3c;
+            background: #fdf2f2;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-group {
+                flex-direction: column;
+            }
+            
+            input[type="text"], input[type="number"] {
+                min-width: auto;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Task Manager</h1>
+            <p>Manage your tasks with ease</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h3>Add New Task</h3>
+                <div class="form-group">
+                    <input type="text" id="taskInput" placeholder="Enter your task here...">
+                    <button onclick="addTask()">➕ Add Task</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>All Tasks</h3>
+                <ul id="taskList"></ul>
+            </div>
+
+            <div class="section">
+                <h3>🔍 Find Task by ID</h3>
+                <div class="form-group">
+                    <input type="number" id="taskIdInput" placeholder="Enter task ID" min="1">
+                    <button onclick="getTaskById()">🔎 Get Task</button>
+                </div>
+                <div id="taskDetails" class="task-details">
+                    <span class="empty-state">Enter a task ID to view details</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const backendUrl = "http://localhost:3000"; // your backend API
+
+        async function fetchTasks() {
+            try {
+                const res = await fetch(`${backendUrl}/tasks`);
+                const tasks = await res.json();
+                const list = document.getElementById("taskList");
+                list.innerHTML = "";
+                
+                if (tasks.length === 0) {
+                    list.innerHTML = '<li class="empty-state">No tasks found. Add your first task above!</li>';
+                    return;
+                }
+                
+                tasks.forEach(task => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <div class="task-card">
+                            <span class="task-id">#${task.id}</span>
+                            <span class="task-title">${task.title}</span>
+                            <button onclick="deleteTask(${task.id})" class="delete-btn">🗑️ Delete</button>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                const list = document.getElementById("taskList");
+                list.innerHTML = '<li class="error-state">❌ Failed to load tasks. Please try again.</li>';
+            }
+        }
+
+        async function addTask() {
+            const input = document.getElementById("taskInput");
+            const title = input.value.trim();
+            if (!title) {
+                alert("Please enter a task title!");
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${backendUrl}/tasks`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title })
+                });
+                
+                if (!res.ok) {
+                    throw new Error(`Failed to add task: ${res.status}`);
+                }
+                
+                input.value = "";
+                fetchTasks();
+            } catch (error) {
+                alert(`Error adding task: ${error.message}`);
+            }
+        }
+
+        async function getTaskById() {
+            const input = document.getElementById("taskIdInput");
+            const id = Number(input.value.trim());
+            const details = document.getElementById("taskDetails");
+            
+            if (!Number.isInteger(id) || id <= 0) {
+                details.innerHTML = '<div class="error-state">❌ Please enter a valid numeric task ID</div>';
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${backendUrl}/tasks/${id}`);
+                
+                if (!res.ok) {
+                    if (res.status === 404) {
+                        details.innerHTML = '<div class="error-state">❌ Task not found. Please check the ID and try again.</div>';
+                    } else {
+                        const err = await res.json().catch(() => ({}));
+                        details.innerHTML = `<div class="error-state">❌ Error: ${err.error || `HTTP ${res.status}`}</div>`;
+                    }
+                    return;
+                }
+                
+                const task = await res.json();
+                details.innerHTML = `
+                    <div class="task-card">
+                        <span class="task-id">#${task.id}</span>
+                        <span class="task-title">${task.title}</span>
+                    </div>
+                `;
+            } catch (error) {
+                details.innerHTML = `<div class="error-state">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function deleteTask(id) {
+            if (!confirm(`Are you sure you want to delete task #${id}? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${backendUrl}/tasks/${id}`, {
+                    method: "DELETE"
+                });
+                
+                if (!res.ok) {
+                    if (res.status === 404) {
+                        alert(`Task #${id} not found. It may have already been deleted.`);
+                    } else {
+                        const err = await res.json().catch(() => ({}));
+                        alert(`Error deleting task: ${err.error || `HTTP ${res.status}`}`);
+                    }
+                    return;
+                }
+                
+                const result = await res.json();
+                alert(`✅ Task #${id} deleted successfully!`);
+                fetchTasks(); // Refresh the task list
+            } catch (error) {
+                alert(`Error deleting task: ${error.message}`);
+            }
+        }
+
+        // Load tasks on page load
+        fetchTasks();
+    </script>
+</body>
+</html>
+
