@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1-frontend
+  namespace: app1
+  labels:
+    app: app1-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1-frontend
+  template:
+    metadata:
+      labels:
+        app: app1-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: mohammadalaa953/taskmanagerk8s:frontend
+          ports:
+            - containerPort: 80
+          env:
+            - name: BACKEND_URL
+              value: "http://app1-backend-service.app1.svc.cluster.local:3000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-frontend-service
+  namespace: app1
+spec:
+  selector:
+    app: app1-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
+
