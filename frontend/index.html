@@ -255,7 +255,7 @@
 
     <script>
         //const backendUrl = "http://localhost:3000"; // your backend API
-        const backendUrl = "http://app1-backend-service.app1.svc.cluster.local:3000";
+        const backendUrl = "${BACKEND_URL}"; // Injected from environment variable
 
 
         async function fetchTasks() {
