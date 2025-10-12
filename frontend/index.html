@@ -254,18 +254,18 @@
     </div>
 
     <script>
-        //const backendUrl = "http://localhost:3000"; // your backend API
-        const backendUrl = "${BACKEND_URL}"; // Injected from environment variable
-
+        // Use same-origin API prefix; Ingress will route /api/* to backend and (optionally) strip /api.
+        const API_BASE = "/api";
 
         async function fetchTasks() {
             try {
-                const res = await fetch(`${backendUrl}/tasks`);
+                const res = await fetch(`${API_BASE}/tasks`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const tasks = await res.json();
                 const list = document.getElementById("taskList");
                 list.innerHTML = "";
                 
-                if (tasks.length === 0) {
+                if (!Array.isArray(tasks) || tasks.length === 0) {
                     list.innerHTML = '<li class="empty-state">No tasks found. Add your first task above!</li>';
                     return;
                 }
@@ -275,7 +275,7 @@
                     li.innerHTML = `
                         <div class="task-card">
                             <span class="task-id">#${task.id}</span>
-                            <span class="task-title">${task.title}</span>
+                            <span class="task-title">${escapeHtml(String(task.title))}</span>
                             <button onclick="deleteTask(${task.id})" class="delete-btn">🗑️ Delete</button>
                         </div>
                     `;
@@ -284,6 +284,7 @@
             } catch (error) {
                 const list = document.getElementById("taskList");
                 list.innerHTML = '<li class="error-state">❌ Failed to load tasks. Please try again.</li>';
+                console.error("fetchTasks error:", error);
             }
         }
 
@@ -296,20 +297,22 @@
             }
             
             try {
-                const res = await fetch(`${backendUrl}/tasks`, {
+                const res = await fetch(`${API_BASE}/tasks`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ title })
                 });
                 
                 if (!res.ok) {
-                    throw new Error(`Failed to add task: ${res.status}`);
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.error || `HTTP ${res.status}`);
                 }
                 
                 input.value = "";
                 fetchTasks();
             } catch (error) {
                 alert(`Error adding task: ${error.message}`);
+                console.error("addTask error:", error);
             }
         }
 
@@ -324,14 +327,14 @@
             }
             
             try {
-                const res = await fetch(`${backendUrl}/tasks/${id}`);
+                const res = await fetch(`${API_BASE}/tasks/${id}`);
                 
                 if (!res.ok) {
                     if (res.status === 404) {
                         details.innerHTML = '<div class="error-state">❌ Task not found. Please check the ID and try again.</div>';
                     } else {
                         const err = await res.json().catch(() => ({}));
-                        details.innerHTML = `<div class="error-state">❌ Error: ${err.error || `HTTP ${res.status}`}</div>`;
+                        details.innerHTML = `<div class="error-state">❌ Error: ${escapeHtml(err.error || `HTTP ${res.status}`)}</div>`;
                     }
                     return;
                 }
@@ -340,11 +343,12 @@
                 details.innerHTML = `
                     <div class="task-card">
                         <span class="task-id">#${task.id}</span>
-                        <span class="task-title">${task.title}</span>
+                        <span class="task-title">${escapeHtml(String(task.title))}</span>
                     </div>
                 `;
             } catch (error) {
-                details.innerHTML = `<div class="error-state">❌ Network error: ${error.message}</div>`;
+                details.innerHTML = `<div class="error-state">❌ Network error: ${escapeHtml(error.message)}</div>`;
+                console.error("getTaskById error:", error);
             }
         }
 
@@ -354,7 +358,7 @@
             }
             
             try {
-                const res = await fetch(`${backendUrl}/tasks/${id}`, {
+                const res = await fetch(`${API_BASE}/tasks/${id}`, {
                     method: "DELETE"
                 });
                 
@@ -368,12 +372,23 @@
                     return;
                 }
                 
-                const result = await res.json();
+                const result = await res.json().catch(() => ({}));
                 alert(`✅ Task #${id} deleted successfully!`);
                 fetchTasks(); // Refresh the task list
             } catch (error) {
                 alert(`Error deleting task: ${error.message}`);
+                console.error("deleteTask error:", error);
             }
+        }
+
+        // small utility to avoid injecting raw HTML content
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         // Load tasks on page load

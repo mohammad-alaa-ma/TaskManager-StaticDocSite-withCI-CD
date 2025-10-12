@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app1
+  namespace: argocd   # ArgoCD itself always runs in the argocd namespace
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/mohammad-alaa-ma/app1withci-cd
+    targetRevision: HEAD
+    path: k8syamlfiles
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: app1
+
+  syncPolicy:
+    automated:
+      prune: true        # delete old resources not in Git anymore
+      selfHeal: true     # reapply if drift is detected
+    syncOptions:
+      - CreateNamespace=true  # auto-create the namespace if missing
+

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Services - Task Manager Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>📘 Services Overview</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="services.html" class="active">Services</a>
+    <a href="traffic.html">Traffic Flow</a>
+  </nav>
+
+  <div class="container">
+    <h2>Services Overview</h2>
+    <table>
+      <tr>
+        <th>Service</th>
+        <th>Type</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><code>task-fe-service</code></td>
+        <td>ClusterIP</td>
+        <td>Internal load balancing for Task Manager Frontend pods</td>
+      </tr>
+      <tr>
+        <td><code>task-be-service</code></td>
+        <td>ClusterIP</td>
+        <td>Internal load balancing for Task Manager Backend pods</td>
+      </tr>
+      <tr>
+        <td><code>docs-service</code></td>
+        <td>ClusterIP</td>
+        <td>Static Documentation Website</td>
+      </tr>
+      <tr>
+        <td><code>ingress</code></td>
+        <td>Ingress</td>
+        <td>External entry point for <code>/task</code> and <code>/docs</code> routes</td>
+      </tr>
+    </table>
+  </div>
+
+  <footer>
+    📘 Documentation Website
+  </footer>
+</body>
+</html>
+

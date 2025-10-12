@@ -1,90 +1,128 @@
-// server.js
+// server.js (improved)
 const express = require("express");
 const mysql = require("mysql2");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-app.use(bodyParser.json());
-app.use(cors());
 
-// MySQL connection (with retry)
-const dbConfig = {
-  host: process.env.DB_HOST || "db",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "password",
-  database: process.env.DB_NAME || "taskdb",
-};
+// Config (use env vars in k8s Deployment)
+const PORT = process.env.PORT || 3000;
+const DB_HOST = process.env.DB_HOST || "db";
+const DB_USER = process.env.DB_USER || "root";
+const DB_PASSWORD = process.env.DB_PASSWORD || "password";
+const DB_NAME = process.env.DB_NAME || "taskdb";
+const BASE_PATH = process.env.BASE_PATH || ""; // set to "/api" if your Ingress does not strip /api
+const CORS_ORIGIN = process.env.CORS_ORIGIN || true; // set to e.g. "https://app1.example.com" in production
 
-let db;
-function connectWithRetry(attemptsLeft = 10, delayMs = 3000) {
-  db = mysql.createConnection(dbConfig);
-  db.connect(err => {
-    if (err) {
-      console.error(`DB connect failed (attempts left: ${attemptsLeft}):`, err.message);
-      if (attemptsLeft <= 1) {
-        console.error("No more attempts left. Exiting.");
-        process.exit(1);
-      }
-      setTimeout(() => connectWithRetry(attemptsLeft - 1, delayMs), delayMs);
-      return;
-    }
-    console.log("✅ Connected to MySQL DB");
-  });
-}
+app.use(express.json());
+app.use(cors({ origin: CORS_ORIGIN }));
 
-connectWithRetry();
-
-// Routes
-app.get("/", (req, res) => {
-  res.send("Task Manager API is running 🚀");
+// Create pool
+const pool = mysql.createPool({
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
+// Wait for DB to become available (with retry)
+async function waitForDb(attemptsLeft = 10, delayMs = 3000) {
+  try {
+    const promisePool = pool.promise();
+    await promisePool.query("SELECT 1");
+    console.log("✅ Connected to MySQL DB (pool ready)");
+  } catch (err) {
+    console.error(`DB connect failed (attempts left: ${attemptsLeft}):`, err.message);
+    if (attemptsLeft <= 1) {
+      console.error("No more attempts left. Exiting.");
+      process.exit(1);
+    }
+    await new Promise(r => setTimeout(r, delayMs));
+    return waitForDb(attemptsLeft - 1, delayMs);
+  }
+}
+
+// Standardized error responder
+function handleError(res, err, code = 500) {
+  console.error("Internal error:", err);
+  return res.status(code).json({ error: code === 500 ? "Internal server error" : err.message || "Error" });
+}
+
+// Router so we can mount at BASE_PATH easily
+const router = express.Router();
+
+// Basic health/readiness
+router.get("/healthz", (req, res) => res.status(200).json({ status: "ok" }));
+router.get("/", (req, res) => res.json({ message: "Task Manager API is running 🚀" }));
+
 // Get all tasks
-app.get("/tasks", (req, res) => {
-  db.query("SELECT * FROM tasks", (err, results) => {
-    if (err) return res.status(500).send(err);
-    res.json(results);
-  });
+router.get("/tasks", async (req, res) => {
+  try {
+    const [rows] = await pool.promise().query("SELECT * FROM tasks");
+    res.json(rows);
+  } catch (err) {
+    return handleError(res, err);
+  }
 });
 
 // Add a task
-app.post("/tasks", (req, res) => {
-  const { title } = req.body;
-  db.query("INSERT INTO tasks (title) VALUES (?)", [title], (err, result) => {
-    if (err) return res.status(500).send(err);
-    res.json({ id: result.insertId, title });
-  });
+router.post("/tasks", async (req, res) => {
+  try {
+    const title = (req.body && req.body.title) ? String(req.body.title).trim() : "";
+    if (!title) return res.status(400).json({ error: "Title is required" });
+
+    const [result] = await pool.promise().query("INSERT INTO tasks (title) VALUES (?)", [title]);
+    res.status(201).json({ id: result.insertId, title });
+  } catch (err) {
+    return handleError(res, err);
+  }
 });
 
-// Get a specific task by id
-app.get("/tasks/:id", (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ error: "Invalid task id" });
+// Get specific task
+router.get("/tasks/:id", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: "Invalid task id" });
+
+    const [rows] = await pool.promise().query("SELECT * FROM tasks WHERE id = ?", [id]);
+    if (!rows || rows.length === 0) return res.status(404).json({ error: "Task not found" });
+    res.json(rows[0]);
+  } catch (err) {
+    return handleError(res, err);
   }
-  db.query("SELECT * FROM tasks WHERE id = ?", [id], (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (!results || results.length === 0) return res.status(404).json({ error: "Task not found" });
-    res.json(results[0]);
-  });
 });
 
-// Delete a specific task by id
-app.delete("/tasks/:id", (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ error: "Invalid task id" });
-  }
-  db.query("DELETE FROM tasks WHERE id = ?", [id], (err, result) => {
-    if (err) return res.status(500).send(err);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Task not found" });
-    }
+// Delete specific task
+router.delete("/tasks/:id", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: "Invalid task id" });
+
+    const [result] = await pool.promise().query("DELETE FROM tasks WHERE id = ?", [id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Task not found" });
     res.json({ message: "Task deleted successfully", deletedId: id });
-  });
+  } catch (err) {
+    return handleError(res, err);
+  }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
+// Mount router at BASE_PATH ('' or '/api' etc.)
+if (BASE_PATH && BASE_PATH !== "") {
+  app.use(BASE_PATH, router);
+  console.log(`API mounted at base path: ${BASE_PATH}`);
+} else {
+  app.use("/", router);
+  console.log("API mounted at root '/'");
+}
+
+// Global 404
+app.use((req, res) => res.status(404).json({ error: "Not found" }));
+
+// Start only after DB ready
+waitForDb().then(() => {
+  app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
+});
 

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: mohammadalaa953/staticsitek8s:latest
+          image: mohammadalaa953/staticsitek8s:last
           ports:
             - containerPort: 80
 ---

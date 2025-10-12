@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Architecture - Task Manager Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>📘 Application Architecture</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="architecture.html" class="active">Architecture</a>
+    <a href="services.html">Services</a>
+    <a href="traffic.html">Traffic Flow</a>
+  </nav>
+
+  <div class="container">
+    <h2>Application Architecture</h2>
+    <h3>Task Manager (3-Tier App)</h3>
+    <ul>
+      <li><strong>Frontend (FE):</strong> Built with HTML, CSS, JavaScript. Dockerized and deployed as pods inside the cluster, exposed via a ClusterIP service, communicates with backend pods.</li>
+      <li><strong>Backend (BE):</strong> Built with Node.js. Dockerized and deployed as pods inside the cluster, connects to external MySQL using its IP + port, exposed via a ClusterIP service.</li>
+      <li><strong>MySQL Database:</strong> Runs outside Kubernetes on a dedicated machine, accessible at <code>IP:3306</code>.</li>
+    </ul>
+
+    <h3>Documentation Website</h3>
+    <ul>
+      <li>Runs as a <strong>static website deployment</strong> inside the cluster.</li>
+      <li>Serves this documentation page.</li>
+      <li>Exposed via a ClusterIP service and routed externally under <code>/docs</code>.</li>
+    </ul>
+
+    <h3>Deployment & Containerization</h3>
+    <ul>
+      <li>Each component (Frontend, Backend, Documentation) is <strong>dockerized</strong> and pushed to <strong>Docker Hub</strong> for easy deployment.</li>
+      <li>All dockerized services are orchestrated using <strong>Kubernetes</strong> for scalability and management.</li>
+      <li><strong>ArgoCD</strong> is used for GitOps-based continuous deployment, syncing changes from <strong>Git & GitHub</strong> repositories.</li>
+      <li>The database remains on an external machine to ensure data persistence and separation of concerns.</li>
+    </ul>
+
+    <img src="Gemini_Generated_Image_prldowprldowprld.png" alt="Architecture Diagram">
+  </div>
+
+  <footer>
+    📘 Documentation Website
+  </footer>
+</body>
+</html>
+

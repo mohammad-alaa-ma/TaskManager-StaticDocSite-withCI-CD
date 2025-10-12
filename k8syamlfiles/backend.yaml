@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: mohammadalaa953/taskmanagerk8strial:backend-a76ac2c
+          image: mohammadalaa953/taskmanagerk8strial:backend-v000
           ports:
             - containerPort: 3000
           env:
@@ -48,8 +48,9 @@ spec:
   selector:
     app: app1-backend
   ports:
-    - port: 3000
+    - name: http
+      port: 3000
       targetPort: 3000
-      nodePort: 30001
-  type: NodePort
-
+      #nodePort: 30001
+  #type: NodePort
+  type: ClusterIP
