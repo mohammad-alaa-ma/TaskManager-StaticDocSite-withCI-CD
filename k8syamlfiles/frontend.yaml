@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: mohammadalaa953/taskmanagerk8strial:frontend
+          image: mohammadalaa953/taskmanagerk8strial:frontend-7d11dcf
           ports:
             - containerPort: 80
           env:
