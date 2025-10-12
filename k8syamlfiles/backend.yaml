@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: mohammadalaa953/taskmanagerk8strial:backend
+          image: mohammadalaa953/taskmanagerk8strial:backend-a76ac2c
           ports:
             - containerPort: 3000
           env:
