@@ -22,8 +22,7 @@ spec:
             - containerPort: 3000
           env:
             - name: DB_HOST
-              #value: "192.168.1.18"   # <-- IP of the external MySQL container
-              value: "192.168.58.1"
+              value: "192.168.58.1"  # <-- IP of the external MySQL container
             - name: DB_PORT
               value: "3306"
             - name: DB_USER
@@ -51,6 +50,4 @@ spec:
     - name: http
       port: 3000
       targetPort: 3000
-      #nodePort: 30001
-  #type: NodePort
   type: ClusterIP
