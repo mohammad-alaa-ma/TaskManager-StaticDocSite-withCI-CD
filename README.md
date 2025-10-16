@@ -87,8 +87,7 @@ app1withci-cd/
     ├── backend.yaml                    # Backend deployment/service
     ├── documentaiondeployment.yaml     # Static docs deployment/service
     ├── ingress.yaml                    # Ingress routing rules
-    ├── secretsForDBUsedByBackend.yaml  # DB credentials secret
-    └── .testdeploynginx.yaml.swp       # Swap file (ignore)
+    └── secretsForDBUsedByBackend.yaml  # DB credentials secret
 ```
 
 ## CI/CD Pipeline Details
