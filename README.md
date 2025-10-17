@@ -16,10 +16,6 @@ https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
 
 ## 🌐 Ingress Routing Overview
 
-### 🔁 Image showing the routing of ingress between task manager app and static documentation pages
-
-<img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/8db06f37-41fd-4d38-a4f2-88eb8b5eb53c" />
-
 ### 🔁 Image showing how the ingress routes to frontend and backend in task manager app
 
 <img width="666" height="706" alt="Image" src="https://github.com/user-attachments/assets/059ecd00-f7b6-4ac4-ac9d-99f0650db688" />
