@@ -1,5 +1,8 @@
 # Complete Documentation for Task Manager K8s CI/CD Project
-https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
+
+### Image showing the flow of project
+<img width="803" height="472" alt="Image" src="https://github.com/user-attachments/assets/045c6513-6133-4b04-9e5b-6a236b65197f" />
+
 ### 🎬 Demo Video: ArgoCD Automated Deployment
 
 This video demonstrates **ArgoCD** in action:
@@ -8,6 +11,8 @@ This video demonstrates **ArgoCD** in action:
 - When a code change is pushed, the **CI/CD pipeline** triggers automatically.  
 - The pipeline builds and pushes the updated image to **DockerHub** and updates the **GitHub repository**.  
 - **ArgoCD** detects the change and automatically deploys **version 2**.
+https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
+
 
 <img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/8db06f37-41fd-4d38-a4f2-88eb8b5eb53c" />
 
