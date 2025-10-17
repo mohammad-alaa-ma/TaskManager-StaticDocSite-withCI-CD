@@ -62,7 +62,9 @@ Kubernetes Cluster
 1. User interacts with frontend UI.
 2. Frontend makes API calls to backend (routed via Ingress).
 3. Backend queries/updates external MySQL database.
-4. Changes are reflected bidirectionally.
+4. Changes are reflected bidirectionally (between Frontend and database).
+
+<img width="666" height="706" alt="Image" src="https://github.com/user-attachments/assets/059ecd00-f7b6-4ac4-ac9d-99f0650db688" />
 
 ## Directory Structure and Purpose
 
