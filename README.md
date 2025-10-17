@@ -11,6 +11,7 @@ This video demonstrates **ArgoCD** in action:
 - When a code change is pushed, the **CI/CD pipeline** triggers automatically.  
 - The pipeline builds and pushes the updated image to **DockerHub** and updates the **GitHub repository**.  
 - **ArgoCD** detects the change and automatically deploys **version 2**.
+- 
 https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
 
 
