@@ -11,11 +11,16 @@ This video demonstrates **ArgoCD** in action:
 - When a code change is pushed, the **CI/CD pipeline** triggers automatically.  
 - The pipeline builds and pushes the updated image to **DockerHub** and updates the **GitHub repository**.  
 - **ArgoCD** detects the change and automatically deploys **version 2**.
-- 
+  
 https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
 
+### Image showing the routing of ingress between task manager app and static documentation pages
 
 <img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/8db06f37-41fd-4d38-a4f2-88eb8b5eb53c" />
+
+### Image showing how the ingress routes to frontend and backend in task manager app
+
+<img width="666" height="706" alt="Image" src="https://github.com/user-attachments/assets/059ecd00-f7b6-4ac4-ac9d-99f0650db688" />
 
 ## Project Overview
 
@@ -70,7 +75,6 @@ Kubernetes Cluster
 3. Backend queries/updates external MySQL database.
 4. Changes are reflected bidirectionally (between Frontend and database).
 
-<img width="666" height="706" alt="Image" src="https://github.com/user-attachments/assets/059ecd00-f7b6-4ac4-ac9d-99f0650db688" />
 
 ## Directory Structure and Purpose
 
