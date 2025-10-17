@@ -24,8 +24,7 @@ https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
 
 <img width="666" height="706" alt="Image" src="https://github.com/user-attachments/assets/059ecd00-f7b6-4ac4-ac9d-99f0650db688" />
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ## Project Overview
 
 This project demonstrates a full-stack task management application deployed on a Kubernetes cluster with a complete CI/CD pipeline. The application consists of a frontend (static HTML/JS), backend (Node.js/Express), and an external MySQL database. The CI/CD pipeline automates deployment using GitHub, Jenkins, DockerHub, and ArgoCD for GitOps.
