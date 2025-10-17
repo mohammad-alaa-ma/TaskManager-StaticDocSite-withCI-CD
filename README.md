@@ -130,7 +130,7 @@ The pipeline consists of two stages triggered by changeset detection:
 - Automatically syncs the changes to the K8s cluster
 - Uses automated sync with pruning and self-healing
 
-## Baby Steps Setup and Deployment
+## Steps of Setup and Deployment
 
 ### Prerequisites
 
