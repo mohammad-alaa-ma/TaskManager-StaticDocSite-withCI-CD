@@ -14,6 +14,31 @@ This video demonstrates **ArgoCD** in action:
   
 https://github.com/user-attachments/assets/bfa9b29d-1cef-4fe3-8a19-7789aefd245e
 
+## Table of Contents
+
+- [Ingress Routing Overview](#ingress-routing-overview)
+- [Project Overview](#project-overview)
+- [Project Architecture](#project-architecture)
+  - [High-Level Architecture](#high-level-architecture)
+  - [Components](#components)
+  - [Data Flow](#data-flow)
+- [Directory Structure and Purpose](#directory-structure-and-purpose)
+- [CI/CD Pipeline Details](#cicd-pipeline-details)
+  - [Jenkins Pipeline (Jenkinsfile)](#jenkins-pipeline-jenkinsfile)
+  - [GitOps with ArgoCD](#gitops-with-argocd)
+- [Steps of Setup and Deployment](#steps-of-setup-and-deployment)
+  - [Prerequisites](#prerequisites)
+  - [Step-by-Step Setup](#step-by-step-setup)
+- [Key Configuration Notes](#key-configuration-notes)
+  - [Database Connection](#database-connection)
+  - [Ingress Routing](#ingress-routing)
+  - [Image Tagging](#image-tagging)
+  - [Security Considerations](#security-considerations)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues](#common-issues)
+  - [Useful Commands](#useful-commands)
+
+
 ## 🌐 Ingress Routing Overview
 
 ### 🔁 Image showing how the ingress routes to frontend and backend in task manager app
